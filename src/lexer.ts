@@ -1,3 +1,5 @@
+// this file originally copied from https://github.com/dataform-co/dataform/blob/main/sqlx/lexer.ts
+
 import * as moo from "moo";
 
 const LEXER_STATE_NAMES = {

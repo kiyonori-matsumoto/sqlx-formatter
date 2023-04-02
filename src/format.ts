@@ -1,3 +1,5 @@
+// this file originally copied from https://github.com/dataform-co/dataform/blob/main/sqlx/format.ts
+
 import * as crypto from "crypto";
 import * as fs from "fs";
 import * as jsBeautify from "js-beautify";
