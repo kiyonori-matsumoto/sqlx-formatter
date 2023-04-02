@@ -1,0 +1,29 @@
+{
+  "comments": {
+    "lineComment": "--",
+    "blockComment": ["/*", "*/"]
+  },
+  "brackets": [
+    ["{", "}"],
+    ["[", "]"],
+    ["(", ")"]
+  ],
+  "autoClosingPairs": [
+    { "open": "{", "close": "}" },
+    { "open": "[", "close": "]" },
+    { "open": "(", "close": ")" },
+    { "open": "'", "close": "'", "notIn": ["string", "comment"] },
+    { "open": "\"", "close": "\"", "notIn": ["string"] }
+  ],
+  "surroundingPairs": [
+    { "open": "{", "close": "}" },
+    { "open": "[", "close": "]" },
+    { "open": "(", "close": ")" },
+    { "open": "'", "close": "'" },
+    { "open": "\"", "close": "\"" }
+  ],
+  "indentationRules": {
+    "increaseIndentPattern": "^.*(\\bTHEN\\b.*\\bEND\\b.*|\\bBEGIN\\b|\\bCASE\\b|\\bLOOP\\b|\\bIF\\b|\\bELSE\\b|\\bELSIF\\b|\\bSELECT\\b|\\bWHEN\\b).*",
+    "decreaseIndentPattern": "^\\s*(\\bEND\\b.*\\bIF\\b.*|\\bEND\\b.*\\bCASE\\b.*|\\bEND\\b.*\\bLOOP\\b.*|\\bEND\\b.*|\\bELSIF\\b.*|\\bELSE\\b.*|\\bWHEN\\b.*|\\bEXIT\\b.*)"
+  }
+}
