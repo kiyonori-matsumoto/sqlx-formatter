@@ -16,7 +16,9 @@ export function activate(context: vscode.ExtensionContext) {
         return [];
       }
 
-      const formattedText = format(document.getText(), "sqlx");
+      const formattedText = format(document.getText(), "sqlx", {
+        ...options,
+      });
 
       const range = new vscode.Range(0, 0, document.lineCount, 0);
       return [vscode.TextEdit.replace(range, formattedText)];
