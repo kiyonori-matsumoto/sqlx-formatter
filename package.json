@@ -1,10 +1,15 @@
 {
   "name": "sqlx-formatter",
-  "displayName": "sqlx-formatter",
+  "displayName": "SQLX Formatter",
   "description": "format sqlx file",
   "version": "0.0.1",
+  "publisher": "matsukiyo-lab",
   "engines": {
     "vscode": "^1.76.0"
+  },
+  "repository": {
+    "url": "https://github.com/kiyonori-matsumoto/sqlx-formatter.git",
+    "type": "git"
   },
   "categories": [
     "Other"
@@ -44,7 +49,7 @@
     "@types/moo": "^0.5.5",
     "@types/node": "16.x",
     "@types/uuid": "^9.0.1",
-    "@types/vscode": "^1.77.0",
+    "@types/vscode": "^1.76.0",
     "@typescript-eslint/eslint-plugin": "^5.56.0",
     "@typescript-eslint/parser": "^5.56.0",
     "@vscode/test-electron": "^2.3.0",
