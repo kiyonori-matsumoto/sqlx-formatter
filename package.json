@@ -29,7 +29,22 @@
         ],
         "configuration": "./language-configuration.json"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "SQLX Formatter",
+      "properties": {
+        "sqlx-formatter.keywordCase": {
+          "type": "string",
+          "default": "upper",
+          "enum": [
+            "upper",
+            "lower",
+            "preserve"
+          ],
+          "markdownDescription": "Specify the case for SQL keywords. Allowed values: `upper`, `lower`, or `preserve`."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",

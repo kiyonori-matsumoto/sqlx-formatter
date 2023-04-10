@@ -18,6 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 
       const formattedText = format(document.getText(), "sqlx", {
         ...options,
+        keywordCase: getKeywordCase(),
       });
 
       const range = new vscode.Range(0, 0, document.lineCount, 0);
@@ -37,3 +38,8 @@ export function activate(context: vscode.ExtensionContext) {
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
+
+function getKeywordCase(): "upper" | "lower" | "preserve" {
+  const config = vscode.workspace.getConfiguration("sqlx-formatter");
+  return config.get("keywordCase", "upper");
+}

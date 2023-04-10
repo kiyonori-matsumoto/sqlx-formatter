@@ -249,7 +249,6 @@ ${formattedSqlCodeBlocks.join("\n\n")}
   formatSql(text: string) {
     const formatOption: sqlFormatter.FormatOptionsWithLanguage = {
       language: "bigquery",
-      keywordCase: "upper",
       expressionWidth: 120,
       ...this.options,
       tabWidth: this.options.tabSize,
