@@ -42,6 +42,19 @@
             "preserve"
           ],
           "markdownDescription": "Specify the case for SQL keywords. Allowed values: `upper`, `lower`, or `preserve`."
+        },
+        "sqlx-formatter.warehouseType": {
+          "type": "string",
+          "default": "bigquery",
+          "enum": [
+            "bigquery",
+            "presto",
+            "postgres",
+            "redshift",
+            "snowflake",
+            "sqldatawarehouse"
+          ],
+          "markdownDescription": "Specify the warehouse type. Allowed values: `bigquery`, `presto`, `postgres`, `redshift`, `snowflake`, or `sqldatawarehouse`."
         }
       }
     }

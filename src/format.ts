@@ -34,26 +34,28 @@ const JS_BEAUTIFY_OPTIONS = {
 
 const MAX_SQL_FORMAT_ATTEMPTS = 5;
 
-export enum WarehouseType {
-  BIGQUERY = "bigquery",
-  PRESTO = "presto",
-  POSTGRES = "postgres",
-  REDSHIFT = "redshift",
-  SNOWFLAKE = "snowflake",
-  SQLDATAWAREHOUSE = "sqldatawarehouse",
-}
+export const WarehouseType = {
+  bigquery: "bigquery",
+  presto: "presto",
+  postgres: "postgres",
+  redshift: "redshift",
+  snowflake: "snowflake",
+  sqldatawarehouse: "sqldatawarehouse",
+} as const;
+
+export type WarehouseType = (typeof WarehouseType)[keyof typeof WarehouseType];
 
 const WAREHOUSE_LANGUAGE_MAP: Record<WarehouseType, sqlFormatter.SqlLanguage> =
   {
-    [WarehouseType.BIGQUERY]: "bigquery",
-    [WarehouseType.PRESTO]: "trino",
-    [WarehouseType.POSTGRES]: "postgresql",
-    [WarehouseType.REDSHIFT]: "redshift",
-    [WarehouseType.SNOWFLAKE]: "snowflake",
-    [WarehouseType.SQLDATAWAREHOUSE]: "transactsql",
+    [WarehouseType.bigquery]: "bigquery",
+    [WarehouseType.presto]: "trino",
+    [WarehouseType.postgres]: "postgresql",
+    [WarehouseType.redshift]: "redshift",
+    [WarehouseType.snowflake]: "snowflake",
+    [WarehouseType.sqldatawarehouse]: "transactsql",
   };
 
-const DEFAULT_WAREHOUSE_FOR_FORMATTING: WarehouseType = WarehouseType.BIGQUERY;
+const DEFAULT_WAREHOUSE_FOR_FORMATTING: WarehouseType = WarehouseType.bigquery;
 
 export function format(
   text: string,
