@@ -80,6 +80,7 @@
     "@dataform/sqlx": "^1.6.4",
     "js-beautify": "^1.14.7",
     "sql-formatter": "^12.2.0",
+    "typeid-js": "^0.3.0",
     "uuid": "^9.0.0"
   }
 }

@@ -9,6 +9,8 @@ const LEXER_STATE_NAMES = {
   INNER_SQL_BLOCK: "innerSqlBlock",
   SQL_SINGLE_QUOTE_STRING: "innerSingleQuote",
   SQL_DOUBLE_QUOTE_STRING: "innerDoubleQuote",
+  SQL_TRIPLE_SINGLE_QUOTE_STRING: "innerTripleSingleQuote",
+  SQL_TRIPLE_DOUBLE_QUOTE_STRING: "innerTripleDoubleQuote",
 };
 
 const SQL_LEXER_TOKEN_NAMES = {
@@ -23,8 +25,10 @@ const SQL_LEXER_TOKEN_NAMES = {
   MULTI_LINE_COMMENT: LEXER_STATE_NAMES.SQL + "_multiLineComment",
   START_JS_PLACEHOLDER: LEXER_STATE_NAMES.SQL + "_startJsPlaceholder",
   BACKTICK: LEXER_STATE_NAMES.SQL + "_backtick",
-  START_QUOTE_SINGLE: LEXER_STATE_NAMES.INNER_SQL_BLOCK + "_startQuoteSingle",
-  START_QUOTE_DOUBLE: LEXER_STATE_NAMES.INNER_SQL_BLOCK + "_startQuoteDouble",
+  START_QUOTE_SINGLE: LEXER_STATE_NAMES.SQL + "_startQuoteSingle",
+  START_QUOTE_DOUBLE: LEXER_STATE_NAMES.SQL + "_startQuoteDouble",
+  START_TRIPLE_QUOTE_SINGLE: LEXER_STATE_NAMES.SQL + "_startTripleQuoteSingle",
+  START_TRIPLE_QUOTE_DOUBLE: LEXER_STATE_NAMES.SQL + "_startTripleQuoteDouble",
   CAPTURE_EVERYTHING_ELSE: LEXER_STATE_NAMES.SQL + "_captureEverythingElse",
 };
 
@@ -62,6 +66,10 @@ const INNER_SQL_BLOCK_LEXER_TOKEN_NAMES = {
   BACKTICK: LEXER_STATE_NAMES.INNER_SQL_BLOCK + "_backtick",
   START_QUOTE_SINGLE: LEXER_STATE_NAMES.INNER_SQL_BLOCK + "_startQuoteSingle",
   START_QUOTE_DOUBLE: LEXER_STATE_NAMES.INNER_SQL_BLOCK + "_startQuoteDouble",
+  START_TRIPLE_QUOTE_SINGLE:
+    LEXER_STATE_NAMES.INNER_SQL_BLOCK + "_startTripleQuoteSingle",
+  START_TRIPLE_QUOTE_DOUBLE:
+    LEXER_STATE_NAMES.INNER_SQL_BLOCK + "_startTripleQuoteDouble",
   CAPTURE_EVERYTHING_ELSE:
     LEXER_STATE_NAMES.INNER_SQL_BLOCK + "_captureEverythingElse",
 };
@@ -90,6 +98,30 @@ const SQL_DOUBLE_QUOTE_STRING_LEXER_TOKEN_NAMES = {
     LEXER_STATE_NAMES.SQL_DOUBLE_QUOTE_STRING + "_captureEverythingElse",
 };
 
+const SQL_TRIPLE_SINGLE_QUOTE_STRING_LEXER_TOKEN_NAMES = {
+  ESCAPED_BACKSLASH:
+    LEXER_STATE_NAMES.SQL_TRIPLE_SINGLE_QUOTE_STRING + "_escapedBackslash",
+  START_JS_PLACEHOLDER:
+    LEXER_STATE_NAMES.SQL_TRIPLE_SINGLE_QUOTE_STRING + "_startJsPlaceholder",
+  CLOSE_QUOTE:
+    LEXER_STATE_NAMES.SQL_TRIPLE_SINGLE_QUOTE_STRING +
+    "_closeTripleQuoteSingle",
+  CAPTURE_EVERYTHING_ELSE:
+    LEXER_STATE_NAMES.SQL_TRIPLE_SINGLE_QUOTE_STRING + "_captureEverythingElse",
+};
+
+const SQL_TRIPLE_DOUBLE_QUOTE_STRING_LEXER_TOKEN_NAMES = {
+  ESCAPED_BACKSLASH:
+    LEXER_STATE_NAMES.SQL_TRIPLE_DOUBLE_QUOTE_STRING + "_escapedBackslash",
+  START_JS_PLACEHOLDER:
+    LEXER_STATE_NAMES.SQL_TRIPLE_DOUBLE_QUOTE_STRING + "_startJsPlaceholder",
+  CLOSE_QUOTE:
+    LEXER_STATE_NAMES.SQL_TRIPLE_DOUBLE_QUOTE_STRING +
+    "_closeTripleQuoteDouble",
+  CAPTURE_EVERYTHING_ELSE:
+    LEXER_STATE_NAMES.SQL_TRIPLE_DOUBLE_QUOTE_STRING + "_captureEverythingElse",
+};
+
 const lexer = moo.states(buildSqlxLexer());
 
 export enum SyntaxTreeNodeType {
@@ -98,6 +130,7 @@ export enum SyntaxTreeNodeType {
   SQL,
   SQL_COMMENT,
   SQL_LITERAL_STRING,
+  SQL_LITERAL_MULTILINE_STRING,
   SQL_STATEMENT_SEPARATOR,
 }
 
@@ -120,6 +153,14 @@ const START_TOKEN_NODE_MAPPINGS = new Map<string, SyntaxTreeNodeType>([
     SQL_LEXER_TOKEN_NAMES.START_QUOTE_DOUBLE,
     SyntaxTreeNodeType.SQL_LITERAL_STRING,
   ],
+  [
+    SQL_LEXER_TOKEN_NAMES.START_TRIPLE_QUOTE_SINGLE,
+    SyntaxTreeNodeType.SQL_LITERAL_MULTILINE_STRING,
+  ],
+  [
+    SQL_LEXER_TOKEN_NAMES.START_TRIPLE_QUOTE_DOUBLE,
+    SyntaxTreeNodeType.SQL_LITERAL_MULTILINE_STRING,
+  ],
 
   [JS_BLOCK_LEXER_TOKEN_NAMES.START_JS_BLOCK, SyntaxTreeNodeType.JAVASCRIPT],
 
@@ -140,6 +181,14 @@ const START_TOKEN_NODE_MAPPINGS = new Map<string, SyntaxTreeNodeType>([
     INNER_SQL_BLOCK_LEXER_TOKEN_NAMES.START_QUOTE_DOUBLE,
     SyntaxTreeNodeType.SQL_LITERAL_STRING,
   ],
+  [
+    INNER_SQL_BLOCK_LEXER_TOKEN_NAMES.START_TRIPLE_QUOTE_SINGLE,
+    SyntaxTreeNodeType.SQL_LITERAL_MULTILINE_STRING,
+  ],
+  [
+    INNER_SQL_BLOCK_LEXER_TOKEN_NAMES.START_TRIPLE_QUOTE_DOUBLE,
+    SyntaxTreeNodeType.SQL_LITERAL_MULTILINE_STRING,
+  ],
 
   [
     SQL_SINGLE_QUOTE_STRING_LEXER_TOKEN_NAMES.START_JS_PLACEHOLDER,
@@ -150,6 +199,16 @@ const START_TOKEN_NODE_MAPPINGS = new Map<string, SyntaxTreeNodeType>([
     SQL_DOUBLE_QUOTE_STRING_LEXER_TOKEN_NAMES.START_JS_PLACEHOLDER,
     SyntaxTreeNodeType.JAVASCRIPT_TEMPLATE_STRING_PLACEHOLDER,
   ],
+
+  [
+    SQL_TRIPLE_SINGLE_QUOTE_STRING_LEXER_TOKEN_NAMES.START_JS_PLACEHOLDER,
+    SyntaxTreeNodeType.JAVASCRIPT_TEMPLATE_STRING_PLACEHOLDER,
+  ],
+
+  [
+    SQL_TRIPLE_DOUBLE_QUOTE_STRING_LEXER_TOKEN_NAMES.START_JS_PLACEHOLDER,
+    SyntaxTreeNodeType.JAVASCRIPT_TEMPLATE_STRING_PLACEHOLDER,
+  ],
 ]);
 
 const CLOSE_TOKEN_TYPES = new Set<string>([
@@ -157,6 +216,8 @@ const CLOSE_TOKEN_TYPES = new Set<string>([
   INNER_SQL_BLOCK_LEXER_TOKEN_NAMES.CLOSE_BLOCK,
   SQL_SINGLE_QUOTE_STRING_LEXER_TOKEN_NAMES.CLOSE_QUOTE,
   SQL_DOUBLE_QUOTE_STRING_LEXER_TOKEN_NAMES.CLOSE_QUOTE,
+  SQL_TRIPLE_SINGLE_QUOTE_STRING_LEXER_TOKEN_NAMES.CLOSE_QUOTE,
+  SQL_TRIPLE_DOUBLE_QUOTE_STRING_LEXER_TOKEN_NAMES.CLOSE_QUOTE,
 ]);
 
 const WHOLE_TOKEN_NODE_MAPPINGS = new Map<string, SyntaxTreeNodeType>([
@@ -188,9 +249,11 @@ export class SyntaxTreeNode {
     const nodeStack = [currentNode];
     lexer.reset(code);
     for (const token of lexer) {
-      if (!token.type) continue;
+      if (!token.type) {
+        throw new Error("Undefined token type encountered.");
+      }
       if (START_TOKEN_NODE_MAPPINGS.has(token.type)) {
-        const childType = START_TOKEN_NODE_MAPPINGS.get(token.type);
+        const childType = START_TOKEN_NODE_MAPPINGS.get(token.type)!;
         if (
           childType === SyntaxTreeNodeType.SQL &&
           currentNode.type !== SyntaxTreeNodeType.SQL
@@ -199,7 +262,7 @@ export class SyntaxTreeNode {
             "SQL syntax tree nodes may only be children of other SQL nodes."
           );
         }
-        const newCurrentNode = new SyntaxTreeNode(childType!, [token.value]);
+        const newCurrentNode = new SyntaxTreeNode(childType, [token.value]);
         nodeStack.push(newCurrentNode);
         currentNode.push(newCurrentNode);
         currentNode = newCurrentNode;
@@ -332,6 +395,19 @@ function buildSqlxLexer(): { [x: string]: moo.Rules } {
     push: LEXER_STATE_NAMES.JS_BLOCK,
   };
   sqlLexer[SQL_LEXER_TOKEN_NAMES.BACKTICK] = "`";
+
+  // Since quotes(' & ") are substring of triple-quotes(''' & """), the declarations of
+  // triple-quote tokens must be placed first. The parsing order by moo implicitly depends
+  // on the order of property creation in rule object.
+  sqlLexer[SQL_LEXER_TOKEN_NAMES.START_TRIPLE_QUOTE_SINGLE] = {
+    match: "'''",
+    push: LEXER_STATE_NAMES.SQL_TRIPLE_SINGLE_QUOTE_STRING,
+  };
+  sqlLexer[SQL_LEXER_TOKEN_NAMES.START_TRIPLE_QUOTE_DOUBLE] = {
+    match: '"""',
+    push: LEXER_STATE_NAMES.SQL_TRIPLE_DOUBLE_QUOTE_STRING,
+  };
+
   sqlLexer[SQL_LEXER_TOKEN_NAMES.START_QUOTE_SINGLE] = {
     match: "'",
     push: LEXER_STATE_NAMES.SQL_SINGLE_QUOTE_STRING,
@@ -405,6 +481,18 @@ function buildSqlxLexer(): { [x: string]: moo.Rules } {
     pop: 1,
   };
   innerSqlBlockLexer[INNER_SQL_BLOCK_LEXER_TOKEN_NAMES.BACKTICK] = "`";
+  innerSqlBlockLexer[
+    INNER_SQL_BLOCK_LEXER_TOKEN_NAMES.START_TRIPLE_QUOTE_SINGLE
+  ] = {
+    match: "'''",
+    push: LEXER_STATE_NAMES.SQL_TRIPLE_SINGLE_QUOTE_STRING,
+  };
+  innerSqlBlockLexer[
+    INNER_SQL_BLOCK_LEXER_TOKEN_NAMES.START_TRIPLE_QUOTE_DOUBLE
+  ] = {
+    match: '"""',
+    push: LEXER_STATE_NAMES.SQL_TRIPLE_DOUBLE_QUOTE_STRING,
+  };
   innerSqlBlockLexer[INNER_SQL_BLOCK_LEXER_TOKEN_NAMES.START_QUOTE_SINGLE] = {
     match: "'",
     push: LEXER_STATE_NAMES.SQL_SINGLE_QUOTE_STRING,
@@ -472,6 +560,52 @@ function buildSqlxLexer(): { [x: string]: moo.Rules } {
     lineBreaks: true,
   };
 
+  const innerTripleSingleQuoteLexer: moo.Rules = {};
+  innerTripleSingleQuoteLexer[
+    SQL_TRIPLE_SINGLE_QUOTE_STRING_LEXER_TOKEN_NAMES.ESCAPED_BACKSLASH
+  ] = "\\\\";
+  innerTripleSingleQuoteLexer[
+    SQL_TRIPLE_SINGLE_QUOTE_STRING_LEXER_TOKEN_NAMES.START_JS_PLACEHOLDER
+  ] = {
+    match: "${",
+    push: LEXER_STATE_NAMES.JS_BLOCK,
+  };
+  innerTripleSingleQuoteLexer[
+    SQL_TRIPLE_SINGLE_QUOTE_STRING_LEXER_TOKEN_NAMES.CLOSE_QUOTE
+  ] = {
+    match: "'''",
+    pop: 1,
+  };
+  innerTripleSingleQuoteLexer[
+    SQL_TRIPLE_SINGLE_QUOTE_STRING_LEXER_TOKEN_NAMES.CAPTURE_EVERYTHING_ELSE
+  ] = {
+    match: /[\s\S]+?/,
+    lineBreaks: true,
+  };
+
+  const innerTripleDoubleQuoteLexer: moo.Rules = {};
+  innerTripleDoubleQuoteLexer[
+    SQL_TRIPLE_DOUBLE_QUOTE_STRING_LEXER_TOKEN_NAMES.ESCAPED_BACKSLASH
+  ] = "\\\\";
+  innerTripleDoubleQuoteLexer[
+    SQL_TRIPLE_DOUBLE_QUOTE_STRING_LEXER_TOKEN_NAMES.START_JS_PLACEHOLDER
+  ] = {
+    match: "${",
+    push: LEXER_STATE_NAMES.JS_BLOCK,
+  };
+  innerTripleDoubleQuoteLexer[
+    SQL_TRIPLE_DOUBLE_QUOTE_STRING_LEXER_TOKEN_NAMES.CLOSE_QUOTE
+  ] = {
+    match: '"""',
+    pop: 1,
+  };
+  innerTripleDoubleQuoteLexer[
+    SQL_TRIPLE_DOUBLE_QUOTE_STRING_LEXER_TOKEN_NAMES.CAPTURE_EVERYTHING_ELSE
+  ] = {
+    match: /[\s\S]+?/,
+    lineBreaks: true,
+  };
+
   const lexerStates: { [x: string]: moo.Rules } = {};
   lexerStates[LEXER_STATE_NAMES.SQL] = sqlLexer;
   lexerStates[LEXER_STATE_NAMES.JS_BLOCK] = jsBlockLexer;
@@ -481,6 +615,10 @@ function buildSqlxLexer(): { [x: string]: moo.Rules } {
     innerSingleQuoteLexer;
   lexerStates[LEXER_STATE_NAMES.SQL_DOUBLE_QUOTE_STRING] =
     innerDoubleQuoteLexer;
+  lexerStates[LEXER_STATE_NAMES.SQL_TRIPLE_SINGLE_QUOTE_STRING] =
+    innerTripleSingleQuoteLexer;
+  lexerStates[LEXER_STATE_NAMES.SQL_TRIPLE_DOUBLE_QUOTE_STRING] =
+    innerTripleDoubleQuoteLexer;
 
   return lexerStates;
 }
