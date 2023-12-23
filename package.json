@@ -2,7 +2,7 @@
   "name": "sqlx-formatter",
   "displayName": "SQLX Formatter",
   "description": "format sqlx file",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "publisher": "matsukiyo-lab",
   "engines": {
     "vscode": "^1.76.0"
